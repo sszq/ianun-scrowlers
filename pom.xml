@@ -45,8 +45,27 @@
             <artifactId>httpclient</artifactId>
             <version>4.5.12</version>
         </dependency>
+
+        <!-- hot deployment 01 -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-devtools</artifactId>
+            <version>2.4.0</version>
+            <optional>true</optional>
+        </dependency>
     </dependencies>
 
-
+    <build>
+        <plugins>
+            <!-- hot deployment 02 -->
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+                    <fork>true</fork>   <!-- must add this tag -->
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 
 </project>

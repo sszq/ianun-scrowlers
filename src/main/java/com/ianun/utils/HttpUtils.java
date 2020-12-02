@@ -1,5 +1,7 @@
 package com.ianun.utils;
 
+import com.ianun.domain.T66yArticle;
+import com.ianun.domain.T66yImg;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
@@ -7,11 +9,17 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.apache.http.util.EntityUtils;
+import org.jsoup.Jsoup;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.io.*;
+import java.net.URL;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -21,13 +29,16 @@ import java.util.regex.Pattern;
  * @description: The crawlers utils
  * @date ......: 2020-December-Wednesday
  */
+@Controller
+@PropertySource({"classpath:config/crawlers.properties"})
+@RequestMapping("/test")
 public class HttpUtils {
 
     @Autowired
-    private static Environment environment;
+    private Environment environment;
 
     @Value("${crawlers.path}")
-    private static String path;
+    private static String crawlersPath;
 
     public static PoolingHttpClientConnectionManager manager = new PoolingHttpClientConnectionManager();
 
@@ -73,7 +84,7 @@ public class HttpUtils {
         try( CloseableHttpResponse httpResponse = httpClient.execute(httpGet);) {
 
             if (null != httpClient && 200 == httpResponse.getStatusLine().getStatusCode()) {
-                htmlString = EntityUtils.toString(httpResponse.getEntity(), "utf8");
+                htmlString = EntityUtils.toString(httpResponse.getEntity(), "utf-8");
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -82,16 +93,42 @@ public class HttpUtils {
         return htmlString;
     }
 
-    public static void downloadImage(String url) {
+    public static void downloadImage(String url, String path) {
         CloseableHttpClient httpClient = HttpClients.custom().setConnectionManager(manager).build();
         final HttpGet httpGet = new HttpGet(url);
         httpGet.setConfig(getConfig());
         try {
             final CloseableHttpResponse httpResponse = httpClient.execute(httpGet);
             if (null != httpResponse && 200 == httpResponse.getStatusLine().getStatusCode()) {
-                File imgFile = new File("");
+                String filePath = path + getFileName(url);
+                File imgFile = new File(path + getFileName(url));
                 OutputStream outputStream = new FileOutputStream(imgFile);
                 httpResponse.getEntity().writeTo(outputStream);
+                System.out.println("download success: " +filePath );
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void downloadT66yImg(T66yImg img, String path) {
+        CloseableHttpClient httpClient = HttpClients.custom().setConnectionManager(manager).build();
+        final HttpGet httpGet = new HttpGet(img.getUrl());
+        httpGet.setConfig(getConfig());
+        try {
+            final CloseableHttpResponse httpResponse = httpClient.execute(httpGet);
+            if (null != httpResponse && 200 == httpResponse.getStatusLine().getStatusCode()) {
+
+                File folder = new File(path + img.getFolderName() + File.separator);
+                if(!folder.exists()) {
+                    folder.mkdirs();
+                }
+
+                String filePath = path + img.getFolderName() + File.separator + img.getFileName();
+                File imgFile = new File(filePath);
+                OutputStream outputStream = new FileOutputStream(imgFile);
+                httpResponse.getEntity().writeTo(outputStream);
+                System.out.println("download success: " +filePath );
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -113,6 +150,21 @@ public class HttpUtils {
     public static void main(String[] args) {
         String url = "https://www.assdrty.com/images/2020/11/30/015391a363732d5696.jpg";
         System.out.println(getFileName(url));
-        System.out.println(path);
+    }
+
+    @RequestMapping("/prop")
+    public void prop() {
+        System.out.println(crawlersPath);
+        System.out.println(environment.getProperty("t66y.path"));
+    }
+
+    @GetMapping("/html")
+    public void html() {
+        System.out.println(getHtmlContent("https://www.assdrty.com/images/2020/11/30/015391a363732d5696.jpg"));
+    }
+
+    @GetMapping("/img")
+    public void image() {
+        String url = "https://www.assdrty.com/images/2020/11/30/015391a363732d5696.jpg";
     }
 }
