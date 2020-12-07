@@ -12,6 +12,24 @@ public class T66yImg {
     private String fileName;
     private String listName;
     private String folderName;
+    private String parentUrl;
+    private T66yArticle parent;
+
+    public T66yArticle getParent() {
+        return parent;
+    }
+
+    public void setParent(T66yArticle parent) {
+        this.parent = parent;
+    }
+
+    public String getParentUrl() {
+        return parentUrl;
+    }
+
+    public void setParentUrl(String parentUrl) {
+        this.parentUrl = parentUrl;
+    }
 
     public String getFolderName() {
         return folderName;

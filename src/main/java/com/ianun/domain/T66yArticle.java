@@ -25,7 +25,17 @@ public class T66yArticle {
 
     private int quantity;
 
+    private String parentUrl;
+
     private List<T66yImg> t66yImages;
+
+    public String getParentUrl() {
+        return parentUrl;
+    }
+
+    public void setParentUrl(String parentUrl) {
+        this.parentUrl = parentUrl;
+    }
 
     public List<T66yImg> getT66yImages() {
         return t66yImages;

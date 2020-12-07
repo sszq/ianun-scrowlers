@@ -57,11 +57,11 @@ public class HttpUtils {
     private static RequestConfig getConfig() {
         RequestConfig requestConfig = RequestConfig.custom()
                 // The max long time of Creating connection
-                .setConnectTimeout(10 * 1000)
+                .setConnectTimeout(30 * 1000)
                 // The max long time of Getting connection
-                .setConnectionRequestTimeout(10 * 1000)
+                .setConnectionRequestTimeout(30 * 1000)
                 // The max long time of data transfer
-                .setSocketTimeout(10 * 1000)
+                .setSocketTimeout(30 * 1000)
                 .build();
         return requestConfig;
     }
@@ -114,12 +114,21 @@ public class HttpUtils {
     public static void downloadT66yImg(T66yImg img, String path) {
         CloseableHttpClient httpClient = HttpClients.custom().setConnectionManager(manager).build();
         final HttpGet httpGet = new HttpGet(img.getUrl());
+        httpGet.setHeader("User-Agent","Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:58.0) Gecko/20100101 Firefox/58.0");
         httpGet.setConfig(getConfig());
         try {
             final CloseableHttpResponse httpResponse = httpClient.execute(httpGet);
             if (null != httpResponse && 200 == httpResponse.getStatusLine().getStatusCode()) {
-
                 File folder = new File(path + img.getFolderName() + File.separator);
+                // 新时代的我们
+                if (img.getParent().getParentUrl().contains("fid=8")) {
+                    folder = new File(path + "新时代的我们" + File.separator + img.getFolderName() + File.separator);
+                    path += "新时代的我们" + File.separator;
+                } else if (img.getParent().getParentUrl().contains("fid=16")) {
+                    // 达盖尔的旗帜
+                    folder = new File(path + "达盖尔的旗帜" + File.separator + img.getFolderName() + File.separator);
+                    path += "达盖尔的旗帜" + File.separator;
+                }
                 if(!folder.exists()) {
                     folder.mkdirs();
                 }
@@ -128,7 +137,7 @@ public class HttpUtils {
                 File imgFile = new File(filePath);
                 OutputStream outputStream = new FileOutputStream(imgFile);
                 httpResponse.getEntity().writeTo(outputStream);
-                System.out.println("download success: " +filePath );
+                System.out.println("download success: " + img.getUrl() + "\t" +filePath );
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -150,21 +159,5 @@ public class HttpUtils {
     public static void main(String[] args) {
         String url = "https://www.assdrty.com/images/2020/11/30/015391a363732d5696.jpg";
         System.out.println(getFileName(url));
-    }
-
-    @RequestMapping("/prop")
-    public void prop() {
-        System.out.println(crawlersPath);
-        System.out.println(environment.getProperty("t66y.path"));
-    }
-
-    @GetMapping("/html")
-    public void html() {
-        System.out.println(getHtmlContent("https://www.assdrty.com/images/2020/11/30/015391a363732d5696.jpg"));
-    }
-
-    @GetMapping("/img")
-    public void image() {
-        String url = "https://www.assdrty.com/images/2020/11/30/015391a363732d5696.jpg";
     }
 }

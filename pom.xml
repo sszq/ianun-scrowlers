@@ -7,6 +7,13 @@
     <groupId>com.ianun</groupId>
     <artifactId>ianun-crawlers</artifactId>
     <version>1.0-SNAPSHOT</version>
+
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>2.4.0</version>
+    </parent>
+
     <build>
         <plugins>
             <plugin>
@@ -15,6 +22,14 @@
                 <configuration>
                     <source>7</source>
                     <target>7</target>
+                </configuration>
+            </plugin>
+            <!-- hot deployment 02 -->
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+                    <fork>true</fork>   <!-- must add this tag -->
                 </configuration>
             </plugin>
         </plugins>
@@ -53,19 +68,12 @@
             <version>2.4.0</version>
             <optional>true</optional>
         </dependency>
-    </dependencies>
 
-    <build>
-        <plugins>
-            <!-- hot deployment 02 -->
-            <plugin>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-maven-plugin</artifactId>
-                <configuration>
-                    <fork>true</fork>   <!-- must add this tag -->
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
+        <dependency>
+            <groupId>net.sf.json-lib</groupId>
+            <artifactId>json-lib</artifactId>
+            <version>2.3</version>
+        </dependency>
+    </dependencies>
 
 </project>

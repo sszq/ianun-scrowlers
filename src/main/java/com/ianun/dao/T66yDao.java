@@ -25,7 +25,7 @@ public class T66yDao {
 
     public List<String> articleUrlList(String url) {
         List<String> list = new ArrayList<>();
-        url = "http://t66y.com/thread0806.php?fid=16&search=&page=1";
+//        url = "http://t66y.com/thread0806.php?fid=16&search=&page=1";
         final Document document;
         try {
             document = Jsoup.parse(new URL(url), 4000);
@@ -71,7 +71,7 @@ public class T66yDao {
 
     public List<T66yArticle> articleList(String url) {
         List<T66yArticle> list = new ArrayList<>();
-        url = "http://t66y.com/thread0806.php?fid=16&search=&page=1";
+//        url = "http://t66y.com/thread0806.php?fid=16&search=&page=1";
         final Document document;
         try {
             document = Jsoup.parse(new URL(url), 4000);
@@ -98,10 +98,18 @@ public class T66yDao {
                             String href = a.attr("href");
                             href = "http://t66y.com/" + href;
                             article.setUrl(href);
-                            Element font = a.selectFirst("font");
-                            if (null != font) {
-                                article.setTitle(font.text());
+                            // 新时代的我们
+                            if (url.contains("fid=8")) {
+                                article.setTitle(a.text());
                                 list.add(article);
+                                // 达盖尔的旗帜
+                            } else if (url.contains("fid=16")) {
+                                Element font = a.selectFirst("font");
+                                if (null != font) {
+                                    article.setTitle(font.text());
+                                    article.setParentUrl(url);
+                                    list.add(article);
+                                }
                             }
                         }
                     }
@@ -127,6 +135,8 @@ public class T66yDao {
                 img.setUrl(src);
                 img.setFolderName(article.getTitle());
                 img.setFileName(HttpUtils.getFileName(img.getUrl()));
+                img.setParentUrl(article.getUrl());
+                img.setParent(article);
                 list.add(img);
             }
         } catch (IOException e) {
