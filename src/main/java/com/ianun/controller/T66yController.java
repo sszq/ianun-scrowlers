@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.net.HttpURLConnection;
 import java.util.List;
 
 /**
@@ -40,6 +41,9 @@ public class T66yController {
     @Value("${t66y.url.demo.article}")
     private String t66yUrlDemoArticle;
 
+    @Value("${t66y.url.demo.novel}")
+    private String t66yUrlDemoNovel;
+
     /** get properties value from application.properties */
     @Autowired
     Environment environment;
@@ -59,7 +63,7 @@ public class T66yController {
         return "success";
     }
 
-    @RequestMapping("/list/article")
+    @RequestMapping("/list/old/article")
     public void articleUrlList(String url) {
         if (null == url) {
             url = t66yUrlDemoCategory;
@@ -68,6 +72,19 @@ public class T66yController {
 
         for (String value : list) {
             System.out.println(value);
+        }
+    }
+
+    @RequestMapping("/list/article")
+    public void articleList(String url) {
+        if (null == url) {
+            url = t66yUrlDemoCategory;
+        }
+        List<T66yArticle> list = t66yService.articleList(url);
+
+        int i = 0;
+        for (T66yArticle article : list) {
+            System.out.println(i++ + ": " + article.getUrl() + "\t" + article.getTitle());
         }
     }
 
@@ -81,6 +98,22 @@ public class T66yController {
         for (String value : list) {
             System.out.println(value);
         }
+    }
+
+    @RequestMapping("/novel")
+    public void novel(String url) {
+        if (null == url) {
+            url = t66yUrlDemoNovel;
+        }
+
+        T66yArticle article = new T66yArticle();
+        article.setUrl(url);
+
+        article = t66yService.novelContent(article);
+
+        HttpUtils.downloadT66yNovel(article, t66yPathSave);
+        System.out.println("下载完成");
+
     }
 
     @RequestMapping("/list/all")
@@ -112,9 +145,20 @@ public class T66yController {
         String url = String.format(baseUrl, fid, page);
         List<T66yArticle> list = t66yService.articleList(url);
         int i = 0;
+
+        System.out.println("dl-url:" + url);
         for (T66yArticle article : list) {
-            Thread thread = new T66yImgThread(article, t66yPathSave);
-            thread.start();
+
+            if (url.contains("fid=20")) {
+                article = t66yService.novelContent(article);
+                HttpUtils.downloadT66yNovel(article, t66yPathSave);
+            }
+
+            // 8/16
+            if (url.contains("fid=8") || url.contains("fid=16")) {
+                Thread thread = new T66yImgThread(article, t66yPathSave);
+                thread.start();
+            }
             System.out.println("Thread " + ++i + "start: " + article.getTitle());
         }
         System.out.println("******************* 下载结束 ********************");

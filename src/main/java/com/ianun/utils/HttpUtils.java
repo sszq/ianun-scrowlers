@@ -9,17 +9,12 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.apache.http.util.EntityUtils;
-import org.jsoup.Jsoup;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
-import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.io.*;
-import java.net.URL;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -141,6 +136,33 @@ public class HttpUtils {
         }
     }
 
+    public static void downloadT66yNovel(T66yArticle article, String path) {
+
+        try {
+            String square = path + "成人文学交流区" + File.separator;
+            String file = square + article.getTitle() + ".txt";
+
+            File squareFolder = new File(square);
+            if(!squareFolder.exists()) {
+                squareFolder.mkdirs();
+            }
+
+            System.out.println(article.getUrl() + ": " + file);
+
+            OutputStream os = new FileOutputStream(file);
+            String content = article.getNovelContent();
+            if (null != content) {
+                os.write(content.getBytes("UTF-8"));
+            }
+            os.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+    }
+
     public static String getFileName(String url) {
         String fileName = null;
         Pattern pattern = Pattern.compile("(?<=/)[^/]*(?=$)");
@@ -154,7 +176,13 @@ public class HttpUtils {
     }
 
     public static void main(String[] args) {
-        String url = "https://www.assdrty.com/images/2020/11/30/015391a363732d5696.jpg";
-        System.out.println(getFileName(url));
+
+        String str = "[現代奇幻] 浮华背后 01-24完 - 成人文學交流區 | 草榴社區 - t66y.com";
+
+        int index = str.indexOf(" - 成人文學交流區");
+
+        System.out.println(str.substring(0, index));
     }
+
+
 }

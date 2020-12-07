@@ -18,4 +18,6 @@ public interface T66yService {
 
     List<T66yArticle> articleList(String url);
     List<T66yImg> imgList(T66yArticle article);
+
+    T66yArticle novelContent(T66yArticle article);
 }

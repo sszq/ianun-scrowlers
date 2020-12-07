@@ -40,4 +40,9 @@ public class T66yServiceImpl implements T66yService {
     public List<T66yImg> imgList(T66yArticle article) {
         return t66yDao.imgList(article);
     }
+
+    @Override
+    public T66yArticle novelContent(T66yArticle article) {
+        return t66yDao.novelContent(article);
+    }
 }

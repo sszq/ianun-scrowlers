@@ -29,6 +29,27 @@ public class T66yArticle {
 
     private List<T66yImg> t66yImages;
 
+    private String novelContent;
+
+    public String getNovelContent() {
+        return novelContent;
+    }
+
+    public void setNovelContent(String novelContent) {
+        this.novelContent = novelContent;
+    }
+
+    /** 用于小说标题前的分类 */
+    private String titleType;
+
+    public String getTitleType() {
+        return titleType;
+    }
+
+    public void setTitleType(String titleType) {
+        this.titleType = titleType;
+    }
+
     public String getParentUrl() {
         return parentUrl;
     }
