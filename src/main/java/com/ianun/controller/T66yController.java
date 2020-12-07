@@ -7,6 +7,7 @@ import com.ianun.utils.HttpUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
+import org.springframework.core.env.Environment;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -27,24 +28,41 @@ public class T66yController {
     @Autowired
     T66yServiceImpl t66yService;
 
-    @Value("${t66y.path}")
-    private String path;
+    @Value("${t66y.path.save}")
+    private String t66yPathSave;
+
+    @Value("${t66y.url.home}")
+    private String t66yUrlHome;
+
+    @Value("${t66y.url.demo.category}")
+    private String t66yUrlDemoCategory;
+
+    @Value("${t66y.url.demo.article}")
+    private String t66yUrlDemoArticle;
+
+    /** get properties value from application.properties */
+    @Autowired
+    Environment environment;
+
 
     @RequestMapping("/html")
     public Object html(String url) {
+        if (null == url) {
+            url = t66yUrlHome;
+        }
         return HttpUtils.getHtmlContent(url);
     }
 
     @RequestMapping("/img")
     public Object img(String url) {
-        HttpUtils.downloadImage(url, path);
+        HttpUtils.downloadImage(url, t66yPathSave);
         return "success";
     }
 
     @RequestMapping("/list/article")
     public void articleUrlList(String url) {
         if (null == url) {
-            url = "http://t66y.com/thread0806.php?fid=16&search=&page=1";
+            url = t66yUrlDemoCategory;
         }
         List<String> list = t66yService.articleUrlList(url);
 
@@ -56,7 +74,7 @@ public class T66yController {
     @RequestMapping("/list/img")
     public void imgUrlList(String url) {
         if (null == url) {
-            url = "http://t66y.com/htm_data/2012/16/4207146.html";
+            url = t66yUrlDemoArticle;
         }
         List<String> list = t66yService.ImgUrlList(url);
 
@@ -68,7 +86,7 @@ public class T66yController {
     @RequestMapping("/list/all")
     public void allImgUrl(String url) {
         if (null == url) {
-            url = "http://t66y.com/thread0806.php?fid=16&search=&page=1";
+            url = t66yUrlDemoCategory;
         }
         List<String> list = t66yService.articleUrlList(url);
         for (String value : list) {
@@ -90,13 +108,12 @@ public class T66yController {
      */
     @RequestMapping("/dl/{fid}/{page}")
     public void parameter(@PathVariable String fid, @PathVariable String page) {
-        // url = "http://t66y.com/thread0806.php?fid=16&page=1";
         String baseUrl = "http://t66y.com/thread0806.php?%s&%s";
         String url = String.format(baseUrl, fid, page);
         List<T66yArticle> list = t66yService.articleList(url);
         int i = 0;
         for (T66yArticle article : list) {
-            Thread thread = new T66yImgThread(article, path);
+            Thread thread = new T66yImgThread(article, t66yPathSave);
             thread.start();
             System.out.println("Thread " + ++i + "start: " + article.getTitle());
         }

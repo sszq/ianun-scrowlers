@@ -34,9 +34,6 @@ import java.util.regex.Pattern;
 @RequestMapping("/test")
 public class HttpUtils {
 
-    @Autowired
-    private Environment environment;
-
     @Value("${crawlers.path}")
     private static String crawlersPath;
 
