@@ -19,5 +19,6 @@ public class TestController {
         System.out.println(System.getProperties().getProperty("http.proxyHost"));
         System.out.println(System.getProperty("http.proxyPort"));
         System.out.println("打印一下，print: Hello World");
+
     }
 }

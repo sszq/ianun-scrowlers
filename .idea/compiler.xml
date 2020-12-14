@@ -9,6 +9,7 @@
         <module name="ianun-crawlers" />
       </profile>
     </annotationProcessing>
+    <bytecodeTargetLevel target="15" />
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
