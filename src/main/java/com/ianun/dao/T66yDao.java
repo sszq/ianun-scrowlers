@@ -113,8 +113,14 @@ public class T66yDao {
                                 // 达盖尔的旗帜
                             } else if (url.contains("fid=16")) {
                                 Element font = a.selectFirst("font");
+                                // page1
                                 if (null != font) {
                                     article.setTitle(font.text());
+                                    article.setParentUrl(url);
+                                    list.add(article);
+                                // page2,3,4,...
+                                } else {
+                                    article.setTitle(a.text());
                                     article.setParentUrl(url);
                                     list.add(article);
                                 }

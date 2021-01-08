@@ -49,11 +49,11 @@ public class HttpUtils {
     private static RequestConfig getConfig() {
         RequestConfig requestConfig = RequestConfig.custom()
                 // The max long time of Creating connection
-                .setConnectTimeout(30 * 1000)
+                .setConnectTimeout(100 * 1000)
                 // The max long time of Getting connection
-                .setConnectionRequestTimeout(30 * 1000)
+                .setConnectionRequestTimeout(100 * 1000)
                 // The max long time of data transfer
-                .setSocketTimeout(30 * 1000)
+                .setSocketTimeout(100 * 1000)
                 .build();
         return requestConfig;
     }
